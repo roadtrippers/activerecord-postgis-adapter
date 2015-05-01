@@ -69,6 +69,7 @@ when 3
   require 'active_record/connection_adapters/postgis_adapter/shared/common_adapter_methods.rb'
   require 'active_record/connection_adapters/postgis_adapter/rails3/main_adapter.rb'
   require 'active_record/connection_adapters/postgis_adapter/rails3/spatial_table_definition.rb'
+  require 'active_record/connection_adapters/postgis_adapter/rails3/spatial_column_info.rb'
   require 'active_record/connection_adapters/postgis_adapter/rails3/spatial_column.rb'
   require 'active_record/connection_adapters/postgis_adapter/shared/arel_tosql.rb'
   require 'active_record/connection_adapters/postgis_adapter/shared/setup.rb'

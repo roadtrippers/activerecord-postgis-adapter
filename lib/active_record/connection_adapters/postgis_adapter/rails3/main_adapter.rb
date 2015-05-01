@@ -76,7 +76,7 @@ module ActiveRecord  # :nodoc:
           # FULL REPLACEMENT. RE-CHECK ON NEW VERSIONS.
           # We needed to return a spatial column subclass.
           table_name_ = table_name_.to_s
-          spatial_info_ = spatial_column_info(table_name_)
+          column_info = SpatialColumnInfo.new(self, quote_string(table_name_))
           column_definitions(table_name_).collect do |col_name_, type_, default_, notnull_|
             # JDBC support: JDBC adapter returns a hash for column definitions,
             # instead of an array of values.
@@ -88,7 +88,7 @@ module ActiveRecord  # :nodoc:
             end
 
             SpatialColumn.new(col_name_, default_, type_, notnull_ == 'f',
-              ((type_ =~ /geometry/i ? spatial_info_[col_name_] : nil) || {}).merge({
+              (column_info.get(col_name_, type_) || {}).merge({
                   :table_name => table_name_,
                   :factory_settings => @rgeo_factory_settings
                 }))
@@ -266,25 +266,7 @@ module ActiveRecord  # :nodoc:
 
 
         def spatial_column_info(table_name_)
-          info_ = query("SELECT * FROM geometry_columns WHERE f_table_name='#{quote_string(table_name_.to_s)}'")
-          result_ = {}
-          info_.each do |row_|
-            name_ = row_[3]
-            type_ = row_[6]
-            dimension_ = row_[4].to_i
-            has_m_ = type_ =~ /m$/i ? true : false
-            type_.sub!(/m$/, '')
-            has_z_ = dimension_ > 3 || dimension_ == 3 && !has_m_
-            result_[name_] = {
-              :name => name_,
-              :type => type_,
-              :dimension => dimension_,
-              :srid => row_[5].to_i,
-              :has_z => has_z_,
-              :has_m => has_m_,
-            }
-          end
-          result_
+          SpatialColumnInfo.new(self, quote_string(table_name.to_s)).all
         end
 
 
