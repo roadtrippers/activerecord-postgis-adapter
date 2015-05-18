@@ -266,7 +266,7 @@ module ActiveRecord  # :nodoc:
 
 
         def spatial_column_info(table_name_)
-          SpatialColumnInfo.new(self, quote_string(table_name.to_s)).all
+          SpatialColumnInfo.new(self, quote_string(table_name_.to_s)).all
         end
 
 
